@@ -7,7 +7,7 @@ RUN apk add --no-cache git gcc make libc-dev
 
 RUN git clone https://github.com/tmori/athrill.git
 RUN git clone https://github.com/tmori/athrill-target.git
-WORKDIR athrill-target/v850e2m/build_linux/
+WORKDIR athrill-target/${TARGET_ARCH}/build_linux/
 RUN make
 
 FROM alpine
@@ -15,7 +15,9 @@ RUN mkdir -p /opt/bin/ /opt/src/athrill /opt/src/athrill-target/
 COPY --from=builder /athrill/bin/linux/athrill2 /opt/bin/
 COPY --from=builder /athrill/trunk/ /opt/src/athrill/
 COPY --from=builder /athrill-target/${TARGET_ARCH} /opt/src/athrill-target/
+ENV PATH $PATH:/opt/bin/
 
 VOLUME /projects
+WORKDIR /projects
 
 ENTRYPOINT [ "tail", "-f", "/dev/null" ]
