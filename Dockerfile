@@ -1,18 +1,23 @@
-FROM alpine as builder
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE} as builder
 
 ARG TARGET_ARCH
 
-RUN apk add --no-cache git gcc make libc-dev
-
-
-RUN git clone https://github.com/tmori/athrill.git
-WORKDIR athrill/trunk/src/build/target/linux_${TARGET_ARCH}/
-RUN make
-
-FROM pizzafactory0contorno/piatto:alpine
 USER root
-RUN mkdir -p /opt/bin/ /opt/src/athrill /opt/src/athrill-target/
-COPY --from=builder /athrill/bin/linux/athrill2 /opt/bin/
-COPY --from=builder /athrill/trunk/ /opt/src/athrill/
+
+WORKDIR /build
+RUN apk add --no-cache git gcc make libc-dev \
+ && git clone --recursive https://github.com/toppers/athrill-target-${TARGET_ARCH} /build \
+ && make -C build_linux
+
+FROM ${BASE_IMAGE}
+
+ARG TARGET_ARCH
+
+USER root
+
+RUN mkdir -p /opt/bin/ /opt/src/athrill
+COPY --from=builder /build/build_linux/athrill2 /opt/bin/athrill2
+COPY --from=builder /build/ /opt/src/athrill/
 USER user
 ENV PATH $PATH:/opt/bin/
