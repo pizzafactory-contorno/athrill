@@ -59,7 +59,7 @@ jobs:
       -
         name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           # Only support linux/amd64 and linux/arm64/v8 as Athrill2 doesn't support only them.
           platforms: linux/amd64, linux/arm64/v8
