@@ -1,5 +1,3 @@
-[![](https://img.shields.io/badge/Dev%20with-PizzaFactory%2fcamino-orange)](https://che-banco.camino.pizzafactory.jp/f?url=https://raw.githubusercontent.com/pizzafactory-contorno/athrill/main/devfile.yaml)
-
 # athrill
 
 PizzaFactory/Contorno side dish with Athrill CPU emulator.
