@@ -8,20 +8,39 @@ on:
       - 'main'
 
 jobs:
+  results:
+    # This job was inspired by https://github.com/orgs/community/discussions/26822#discussioncomment-5122101
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Final Results
+    needs: [docker]
+    steps:
+      - run: exit 1
+        # see https://stackoverflow.com/a/67532120/4907315
+        if: >-
+          ${{
+               contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+          }}
+
   docker:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         tag:
-          - alpine
+          - alpine-latest
           - alpine-edge
           - alpine-3.15.0
           - alpine-3.10
         target:
           - ARMv7-A
           - v850e2m
-          - rh850f1x
+          # Due to an upstream issue, th850flx supports are suspended.
+          #- rh850f1x
     steps:
+      - id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
       -
         name: Checkout
         uses: actions/checkout@v2
@@ -44,8 +63,9 @@ jobs:
         with:
           # Only support linux/amd64 and linux/arm64/v8 as Athrill2 doesn't support only them.
           platforms: linux/amd64, linux/arm64/v8
+          context: ${{ matrix.tag }}
           build-args: |
-            BASE_IMAGE=pizzafactory0contorno/piatto:${{ matrix.tag }}
             TARGET_ARCH=${{ matrix.target }}
+            EXTRA_PACKAGES=
           push: ${{ github.event_name == 'push' }}
-          tags: pizzafactory0contorno/athrill:${{ matrix.target }}_${{ matrix.tag }}
+          tags: pizzafactory0contorno/${{ steps.repository.outputs.name }}:${{ matrix.target }}_${{ matrix.tag }}

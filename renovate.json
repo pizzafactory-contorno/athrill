@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranches": ["main"],
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchBaseBranches": ["main"],
+      "enabled": false
+    }
+  ],
+  "automerge": true,
+  "platformAutomerge": true,
+  "dependencyDashboard": false,
+  "extends": ["config:recommended",":rebaseStalePrs"],
+  "enabledManagers": ["github-actions","dockerfile"]
+}
