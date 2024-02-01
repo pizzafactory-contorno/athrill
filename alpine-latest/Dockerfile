@@ -1,4 +1,4 @@
-FROM pizzafactory0contorno/piatto:alpine-latest@sha256:0daccc6482311132e937b518a5bfe7c0eb86341ee3bf86b6a1b4baea0bba1687 as builder
+FROM pizzafactory0contorno/piatto:alpine-latest@sha256:0ce280540239535b96669b2b223de67fc28aa796b244da80eacab3309998e6da as builder
 
 ARG TARGET_ARCH
 ARG EXTRA_PACKAGES
@@ -11,7 +11,7 @@ RUN git clone --recursive https://github.com/toppers/athrill-target-${TARGET_ARC
 RUN if [ -f ./build.bash ]; then bash ./build.bash all; else cd /tmp && cmake /build && make; fi
 
 
-FROM pizzafactory0contorno/piatto:alpine-latest@sha256:0daccc6482311132e937b518a5bfe7c0eb86341ee3bf86b6a1b4baea0bba1687
+FROM pizzafactory0contorno/piatto:alpine-latest@sha256:0ce280540239535b96669b2b223de67fc28aa796b244da80eacab3309998e6da
 
 RUN sudo mkdir -p /opt/bin/ /opt/src/athrill
 COPY --from=builder /tmp/athrill2 /opt/bin/athrill2
