@@ -36,8 +36,14 @@ jobs:
         target:
           - ARMv7-A
           - v850e2m
-          # Due to an upstream issue, th850flx supports are suspended.
-          #- rh850f1x
+          - rh850f1x
+        include:
+          - target: rh850f1x
+            extra_packages_hako: spdlog
+            extra_packages_hako_dev: spdlog-dev
+        exclude:
+          - target: rh850f1x
+            tag: alpine-3.10
     steps:
       - id: repository
         run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
@@ -66,6 +72,7 @@ jobs:
           context: ${{ matrix.tag }}
           build-args: |
             TARGET_ARCH=${{ matrix.target }}
-            EXTRA_PACKAGES=
+            EXTRA_PACKAGES_HAKO=${{ matrix.extra_packages_hako }}
+            EXTRA_PACKAGES_HAKO_DEV=${{ matrix.extra_packages_hako_dev }}
           push: ${{ github.event_name == 'push' }}
           tags: pizzafactory0contorno/${{ steps.repository.outputs.name }}:${{ matrix.target }}_${{ matrix.tag }}
